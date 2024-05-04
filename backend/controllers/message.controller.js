@@ -16,6 +16,10 @@ export const sendMessage = async (req, res) => {
 			conversation = await Conversation.create({
 				participants: [senderId, receiverId],
 			});
+
+			const receiverSocketId = getReceiverSocketId(receiverId);
+			if (receiverSocketId) {
+			}
 		}
 
 		const newMessage = new Message({
@@ -31,9 +35,17 @@ export const sendMessage = async (req, res) => {
 		await Promise.all([conversation.save(), newMessage.save()]);
 
 		const receiverSocketId = getReceiverSocketId(receiverId);
+		// const senderSocketId = getReceiverSocketId(senderId);
+
+		/* 		if(receiverSocketId && conversation.messages.legth === 1){
+				}else if(receiverSocketId){
+					io.to(receiverSocketId).emit("newMessage", newMessage);
+				} */
 		if (receiverSocketId) {
+			io.to(recieverSocketId).emit("createConversation", conversation);
 			io.to(receiverSocketId).emit("newMessage", newMessage);
 		}
+
 
 		res.status(201).json(newMessage);
 	} catch (error) {

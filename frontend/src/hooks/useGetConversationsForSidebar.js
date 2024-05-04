@@ -1,21 +1,22 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import useConversation from "../zustand/useConversation";
 
-const useGetConversations = () => {
+const useGetConversationsForSidebar = () => {
 	const [loading, setLoading] = useState(false);
-	const [conversations, setConversations] = useState([]);
+	const {conversationsForSidebar, setConversationsForSidebar} = useConversation();
 
 
 	useEffect(() => {
 		const getConversations = async () => {
 			setLoading(true);
 			try {
-				const res = await fetch(`/api/users/conversation`);
+				const res = await fetch(`/api/users/sidebar`);
 				const data = await res.json();
 				if (data.error) {
 					throw new Error(data.error);
 				}
-				setConversations(data);
+				setConversationsForSidebar(data);
 			} catch (error) {
 				toast.error(error.message);
 			} finally {
@@ -26,6 +27,6 @@ const useGetConversations = () => {
 		getConversations();
 	}, []);
 
-	return { loading, conversations };
+	return { loading, conversationsForSidebar };
 };
-export default useGetConversations;
+export default useGetConversationsForSidebar;

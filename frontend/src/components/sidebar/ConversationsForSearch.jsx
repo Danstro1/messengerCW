@@ -1,21 +1,21 @@
 import { useRef } from "react";
-import useGetConversations from "../../hooks/useGetConversations";
 import useListenMessages from "../../hooks/useListenMessages";
 import Conversation from "./Conversation";
+import useGetConversationsForSidebar from "../../hooks/useGetConversationsForSidebar";
 
-const Conversations = () => {
-	const { loading, conversations } = useGetConversations();
+const ConversationsForSidebar = () => {
+	const { loading, conversationsForSidebar } = useGetConversationsForSidebar();
 
 	useListenMessages();
 	const lastMessageRef = useRef();
 
 	return (
 		<div className='py-2 mb-2 flex flex-col overflow-auto'>
-			{conversations.map((conversation, idx) => (
+			{conversationsForSidebar.map((conversation, idx) => (
 				<div key={conversation._id} ref={lastMessageRef}>
 					<Conversation
 						conversation={conversation}
-						lastIdx={idx === conversations.length - 1}
+						lastIdx={idx === conversationsForSidebar.length - 1}
 					/>
 				</div>
 			))}
@@ -24,4 +24,4 @@ const Conversations = () => {
 		</div>
 	);
 };
-export default Conversations;
+export default ConversationsForSidebar;
