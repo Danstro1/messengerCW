@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSocketContext } from "../../context/SocketContext";
 import useConversation from "../../zustand/useConversation";
-import GroupCheckbox from "./groupCheckbox.jsx";
+import GroupCheckbox from "./GroupCheckbox";
 import useGroup from "../../zustand/useGroup";
 
 const Conversation = ({ isGroupCreating, conversation, lastIdx }) => {
