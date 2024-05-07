@@ -1,5 +1,6 @@
 import Group from "../models/group.model.js";
 import Message from "../models/message.model.js";
+import { getReceiverSocketId, io } from "../socket/socket.js";
 
 export const createGroup = async (req, res) => {
     try {
@@ -8,7 +9,8 @@ export const createGroup = async (req, res) => {
 
         const newGroup = await Group.create({
             name: name,
-            participants: [creatorId, ...participants]
+            participants: [creatorId, ...participants],
+            owner: creatorId,
         });
 
         if (newGroup) {
@@ -18,12 +20,27 @@ export const createGroup = async (req, res) => {
                 _id: newGroup._id,
                 name: newGroup.name,
                 participants: newGroup.participants,
+                owner: creatorId,
             });
         }
 
     } catch (error) {
         console.log("Error in createGroup controller: ", error.message);
         res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+export const getGroupsForUser = async (req, res) => {
+    try {
+        const currentUserId = req.user._id;
+
+        let groups = await Group.find({ participants: currentUserId });
+
+        res.status(200).json(groups);
+
+    } catch (error) {
+        console.log("Error in getGroupsForUser controller: ", error.message);
+        res.status(500).json(error.message);
     }
 }
 
@@ -49,6 +66,14 @@ export const sendMessage = async (req, res) => {
             }
 
             await Promise.all([group.save(), newMessage.save()]);
+
+            newMessage.receiverId.forEach(receiverId => {
+                const receiverSocketId = getReceiverSocketId(receiverId);
+
+                if (receiverSocketId) {
+                    io.to(receiverSocketId).emit("newMessage", newMessage);
+                }
+            })
 
             res.status(201).json(newMessage);
         }

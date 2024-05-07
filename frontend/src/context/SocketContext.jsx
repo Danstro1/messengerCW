@@ -15,12 +15,12 @@ export const SocketContextProvider = ({ children }) => {
 
 	useEffect(() => {
 		if (authUser) {
-			const socket = io("http://localhost:5000", {
+			const socket = io("https://messengercw.onrender.com", {
 				query: {
 					userId: authUser._id,
 				},
 			});
-
+			
 			setSocket(socket);
 
 			socket.on("getOnlineUsers", (users) => {

@@ -1,21 +1,28 @@
+
 import { useRef } from "react";
-import useListenMessages from "../../hooks/useListenMessages";
-import Conversation from "./Conversation";
-import useGetConversationsForSidebar from "../../hooks/useGetConversationsForSidebar";
+import useGetConversations from "../../hooks/useGetConversations.js";
+import useListenNewConversations from "../../hooks/useListenNewConversations.js";
+import Conversation from "./Conversation.jsx";
 
-const ConversationsForSidebar = () => {
-	const { loading, conversationsForSidebar } = useGetConversationsForSidebar();
+const ConversationsForSearch = () => {
+	const { loading, conversationsForSearch, search} = useGetConversations();
 
-	useListenMessages();
-	const lastMessageRef = useRef();
+	useListenNewConversations();
+	const lastConversationRef = useRef();
+
+	const isSearchValid = search.trim() !== '';
+
+	const filteredConversations = isSearchValid ? conversationsForSearch.filter((conversation) =>
+		conversation.fullName.toLowerCase().includes(search.toLowerCase().trim())
+	) : [];
 
 	return (
 		<div className='py-2 mb-2 flex flex-col overflow-auto'>
-			{conversationsForSidebar.map((conversation, idx) => (
-				<div key={conversation._id} ref={lastMessageRef}>
+			{filteredConversations.map((conversation, idx) => (
+				<div key={conversation._id} ref={lastConversationRef}>
 					<Conversation
 						conversation={conversation}
-						lastIdx={idx === conversationsForSidebar.length - 1}
+						lastIdx={idx === filteredConversations.length - 1}
 					/>
 				</div>
 			))}
@@ -24,4 +31,4 @@ const ConversationsForSidebar = () => {
 		</div>
 	);
 };
-export default ConversationsForSidebar;
+export default ConversationsForSearch;

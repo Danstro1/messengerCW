@@ -4,7 +4,7 @@ import useConversation from "../zustand/useConversation";
 
 const useGetConversationsForSidebar = () => {
 	const [loading, setLoading] = useState(false);
-	const {conversationsForSidebar, setConversationsForSidebar} = useConversation();
+	const {conversationsForSidebar, setConversationsForSidebar, messages} = useConversation();
 
 
 	useEffect(() => {
@@ -25,8 +25,8 @@ const useGetConversationsForSidebar = () => {
 		};
 
 		getConversations();
-	}, []);
+	}, [setConversationsForSidebar]);
 
-	return { loading, conversationsForSidebar };
+	return { loading, conversationsForSidebar, messages };
 };
 export default useGetConversationsForSidebar;

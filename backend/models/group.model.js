@@ -19,6 +19,10 @@ const groupSchema = new mongoose.Schema(
                 default: [],
             },
         ],
+        owner: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+        }
     },
     { timestamps: true }
 );

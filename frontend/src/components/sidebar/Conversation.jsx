@@ -1,12 +1,33 @@
+import { useState } from "react";
 import { useSocketContext } from "../../context/SocketContext";
 import useConversation from "../../zustand/useConversation";
+import GroupCheckbox from "./groupCheckbox";
+import useGroup from "../../zustand/useGroup";
 
-const Conversation = ({ conversation, lastIdx }) => {
+const Conversation = ({ isGroupCreating, conversation, lastIdx }) => {
 	const { selectedConversation, setSelectedConversation } = useConversation();
+	const {groupUsersForCreating, setGroupUsersForCreating, setSelectedGroup} = useGroup();
+
+	const [selectedForGroup, setSelectedForGroup] = useState(false);
 
 	const isSelected = selectedConversation?._id === conversation._id;
 	const { onlineUsers } = useSocketContext();
 	const isOnline = onlineUsers.includes(conversation._id);
+
+	const handleSelect = () => {
+		if (selectedForGroup) {
+			setSelectedForGroup(false);
+			setGroupUsersForCreating(groupUsersForCreating.filter((user) => user !== conversation._id));
+		} else {
+			setSelectedForGroup(true);
+			setGroupUsersForCreating([...groupUsersForCreating, conversation._id]);
+		}
+	}
+
+	const handleSelection = () => {
+		setSelectedGroup(null);
+		setSelectedConversation(conversation);
+	}
 
 	return (
 		<>
@@ -14,7 +35,7 @@ const Conversation = ({ conversation, lastIdx }) => {
 				className={`flex gap-2 items-center hover:bg-sky-500 rounded p-2 py-1 cursor-pointer
 				${isSelected ? "bg-sky-500" : ""}
 			`}
-				onClick={() => setSelectedConversation(conversation)}
+				onClick={() => isGroupCreating ? handleSelect() : handleSelection()}
 			>
 				<div className={`avatar ${isOnline ? "online" : ""}`}>
 					<div className='w-12 rounded-full'>
@@ -27,6 +48,7 @@ const Conversation = ({ conversation, lastIdx }) => {
 						<p className='font-bold text-gray-200'>{conversation.fullName}</p>
 					</div>
 				</div>
+				{isGroupCreating ? <GroupCheckbox isSelected={selectedForGroup} /> : ""}
 			</div>
 
 			{!lastIdx && <div className='divider my-0 py-0 h-1' />}

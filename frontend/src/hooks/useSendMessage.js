@@ -1,15 +1,18 @@
 import { useState } from "react";
 import useConversation from "../zustand/useConversation";
 import toast from "react-hot-toast";
+import useGroup from "../zustand/useGroup";
 
 const useSendMessage = () => {
 	const [loading, setLoading] = useState(false);
 	const { messages, setMessages, selectedConversation } = useConversation();
+	const { selectedGroup } = useGroup();
 
+	const url = `/api/${selectedConversation ? `messages/send/${selectedConversation._id}` :  `group/send/${selectedGroup._id}`}`
 	const sendMessage = async (message) => {
 		setLoading(true);
 		try {
-			const res = await fetch(`/api/messages/send/${selectedConversation._id}`, {
+			const res = await fetch(url, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",

@@ -4,24 +4,30 @@ import MessageInput from "./MessageInput";
 import Messages from "./Messages";
 import { TiMessages } from "react-icons/ti";
 import { useAuthContext } from "../../context/AuthContext";
+import useGroup from "../../zustand/useGroup";
 
 const MessageContainer = () => {
 	const { selectedConversation, setSelectedConversation } = useConversation();
 
+	const { selectedGroup, setSelectedGroup } = useGroup();
+
 	useEffect(() => {
-		return () => setSelectedConversation(null);
-	}, [setSelectedConversation]);
+		return () => {
+			setSelectedConversation(null);
+			setSelectedGroup(null)
+		}
+	}, [setSelectedConversation, setSelectedGroup]);
 
 	return (
 		<div className='md:min-w-[450px] flex flex-col pr-1'>
-			{!selectedConversation ? (
+			{!selectedConversation && !selectedGroup ? (
 				<NoChatSelected />
 			) : (
 				<>
 					{/* Header */}
 					<div className='bg-slate-500 px-4 py-2 mb-2'>
 						<span className='label-text'>To:</span>{" "}
-						<span className='text-gray-900 font-bold'>{selectedConversation.fullName}</span>
+						<span className='text-gray-900 font-bold'>{selectedConversation ? selectedConversation.fullName : selectedGroup.name}</span>
 					</div>
 					<Messages />
 					<MessageInput />

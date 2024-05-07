@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import useConversation from "../zustand/useConversation";
 
 const useGetConversations = () => {
 	const [loading, setLoading] = useState(false);
-	const [conversations, setConversations] = useState([]);
+
+	const {conversationsForSearch, setConversationsForSearch, search, setSearch} = useConversation();
 
 
 	useEffect(() => {
@@ -15,7 +17,7 @@ const useGetConversations = () => {
 				if (data.error) {
 					throw new Error(data.error);
 				}
-				setConversations(data);
+				setConversationsForSearch(data);
 			} catch (error) {
 				toast.error(error.message);
 			} finally {
@@ -24,8 +26,8 @@ const useGetConversations = () => {
 		};
 
 		getConversations();
-	}, []);
+	}, [setConversationsForSearch]);
 
-	return { loading, conversations };
+	return { loading, conversationsForSearch, search, setSearch };
 };
 export default useGetConversations;

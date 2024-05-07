@@ -1,5 +1,6 @@
 import Conversation from "../models/conversation.model.js";
 import Message from "../models/message.model.js";
+import User from "../models/user.model.js";
 import { getReceiverSocketId, io } from "../socket/socket.js";
 
 export const sendMessage = async (req, res) => {
@@ -16,10 +17,6 @@ export const sendMessage = async (req, res) => {
 			conversation = await Conversation.create({
 				participants: [senderId, receiverId],
 			});
-
-			const receiverSocketId = getReceiverSocketId(receiverId);
-			if (receiverSocketId) {
-			}
 		}
 
 		const newMessage = new Message({
@@ -35,22 +32,25 @@ export const sendMessage = async (req, res) => {
 		await Promise.all([conversation.save(), newMessage.save()]);
 
 		const receiverSocketId = getReceiverSocketId(receiverId);
-		// const senderSocketId = getReceiverSocketId(senderId);
+		const senderSocketId = getReceiverSocketId(senderId);
 
-		/* 		if(receiverSocketId && conversation.messages.legth === 1){
-				}else if(receiverSocketId){
-					io.to(receiverSocketId).emit("newMessage", newMessage);
-				} */
+		const sender = await User.findOne({ _id: senderId })
+
+		const reciever = await User.findOne({ _id: receiverId })
+
 		if (receiverSocketId) {
-			io.to(recieverSocketId).emit("createConversation", conversation);
 			io.to(receiverSocketId).emit("newMessage", newMessage);
 		}
 
+		if (conversation.messages.length == 1) {
+			if(receiverSocketId) io.to(receiverSocketId).emit("createConversation", reciever, sender);
+			if(senderSocketId) io.to(senderSocketId).emit("createConversation", reciever, sender);
+		}
 
 		res.status(201).json(newMessage);
 	} catch (error) {
 		console.log("Error in sendMessage controller: ", error.message);
-		res.status(500).json({ error: "Internal server error" });
+		res.status(500).json(error.message);
 	}
 };
 
