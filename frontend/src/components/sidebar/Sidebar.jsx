@@ -1,7 +1,7 @@
-import ConversationsForSidebar from "./ConversationsForSidebar";
-import Footer from "./Footer";
-import GroupInput from "./GroupInput";
-import SearchInput from "./SearchInput";
+import ConversationsForSidebar from "./ConversationsForSidebar.jsx";
+import Footer from "./Footer.jsx";
+import GroupInput from "./GroupInput.jsx";
+import SearchInput from "./SearchInput.jsx";
 
 const Sidebar = (props) => {
 
