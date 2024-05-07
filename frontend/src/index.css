@@ -11,7 +11,7 @@ body {
 
 /* dark mode looking scrollbar */
 ::-webkit-scrollbar {
-	width: 8px;
+	width: 7px;
 }
 
 ::-webkit-scrollbar-track {
@@ -28,6 +28,17 @@ body {
 	background: #242424;
 }
 
+.dropdown:not(.dropdown-hover):focus .dropdown-content,
+.dropdown:focus-within .dropdown-content {
+	visibility: hidden;
+	opacity: 0;
+}
+
+.dropdown.dropdown-open .dropdown-content {
+	visibility: visible !important;
+	opacity: 1;
+}
+
 /* SHAKE ANIMATION ON HORIZONTAL DIRECTION */
 .shake {
 	animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) 0.2s both;
@@ -37,6 +48,7 @@ body {
 }
 
 @keyframes shake {
+
 	10%,
 	90% {
 		transform: translate3d(-1px, 0, 0);
