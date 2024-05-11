@@ -1,9 +1,9 @@
 import { useRef } from "react";
-import Conversation from "./Conversation";
+import Conversation from "./Conversation.jsx";
 import useGetConversationsForSidebar from "../../hooks/useGetConversationsForSidebar";
 import useListenNewConversations from "../../hooks/useListenNewConversations";
 import useGroup from "../../zustand/useGroup";
-import Group from "./Group";
+import Group from "./Group.jsx";
 import useGetGroupsForSidebar from "../../hooks/useGetGroups";
 
 const ConversationsForSidebar = () => {
