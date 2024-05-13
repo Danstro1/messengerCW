@@ -1,5 +1,6 @@
 import path from "path";
 import express from "express";
+import fileUpload from "express-fileupload";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 
@@ -17,6 +18,7 @@ const __dirname = path.resolve();
 
 const PORT = process.env.PORT || 5000;
 
+app.use(fileUpload())
 app.use(express.json());
 app.use(cookieParser());
 

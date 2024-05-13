@@ -1,6 +1,8 @@
+import File from "../models/file.model.js";
 import Group from "../models/group.model.js";
 import Message from "../models/message.model.js";
 import { getReceiverSocketId, io } from "../socket/socket.js";
+
 
 export const createGroup = async (req, res) => {
     try {
@@ -86,7 +88,6 @@ export const sendMessage = async (req, res) => {
 export const getMessages = async (req, res) => {
     try {
         const { id: groupId } = req.params;
-        const senderId = req.user._id;
 
         const group = await Group.findOne({
             _id: groupId
@@ -97,6 +98,65 @@ export const getMessages = async (req, res) => {
         const messages = group.messages;
 
         res.status(200).json(messages);
+    } catch (error) {
+        console.log("Error in getMessages controller: ", error.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+export const uploadFile = async (req, res) => {
+    try {
+        const { id: groupId } = req.params;
+        const file = req.files.file;
+        const senderId = req.user._id;
+
+        let group = await Group.findOne({
+            _id: groupId
+        });
+
+        if (group && group.participants.includes(senderId)) {
+            const newFile = await File.create({
+                name: file.name,
+                senderId,
+                receiverId: group.participants,
+                file: file.data
+            });
+
+            if (newFile) {
+                group.files.push(newFile._id);
+            }
+
+            await Promise.all([group.save(), newFile.save()]);
+
+            newFile.receiverId.forEach(receiverId => {
+                const receiverSocketId = getReceiverSocketId(receiverId);
+
+                if (receiverSocketId) {
+                    io.to(receiverSocketId).emit("newMessage", newFile);
+                }
+            })
+
+            res.status(201).json(newFile);
+        }
+    } catch (error) {
+        console.log("Error in sendFile controller: ", error.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+export const getFiles = async (req, res) => {
+    try {
+        const { id: groupId } = req.params;
+
+        const group = await Group.findOne({
+            _id: groupId
+        }).populate("files");
+
+        if (!group) return res.status(200).json([]);
+
+        const files = group.files;
+
+        res.status(200).json(files);
     } catch (error) {
         console.log("Error in getMessages controller: ", error.message);
         res.status(500).json({ error: "Internal server error" });

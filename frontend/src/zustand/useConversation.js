@@ -14,6 +14,9 @@ const useConversation = create((set) => ({
 	search: '', 
 	setSearch: (search) => set({ search }),
 
+	files: [],
+	setFiles: (files) => set({ files }),
+
 }));
 
 export default useConversation;
