@@ -29,7 +29,11 @@ const groupSchema = new mongoose.Schema(
         owner: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-        }
+        },
+        groupPic: {
+			type: String,
+			default: "",
+		},
     },
     { timestamps: true }
 );

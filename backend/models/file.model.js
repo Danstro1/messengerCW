@@ -19,7 +19,7 @@ const fileSchema = new mongoose.Schema(
 			}
 		],
 		file: {
-			type: Buffer,
+			type: String,
 			required: true,
 		},
 	},

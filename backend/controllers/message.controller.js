@@ -2,7 +2,11 @@ import Conversation from "../models/conversation.model.js";
 import File from "../models/file.model.js";
 import Message from "../models/message.model.js";
 import User from "../models/user.model.js";
+import fs from 'fs';
+import path from 'path';
 import { getReceiverSocketId, io } from "../socket/socket.js";
+
+const __dirname = path.resolve(path.dirname(''));
 
 export const sendMessage = async (req, res) => {
 	try {
@@ -43,7 +47,7 @@ export const sendMessage = async (req, res) => {
 			io.to(receiverSocketId).emit("newMessage", newMessage);
 		}
 
-		if (conversation.messages.length == 1) {
+		if (conversation.messages.length == 1 && conversation.files.length < 1) {
 			if(receiverSocketId) io.to(receiverSocketId).emit("createConversation", reciever, sender);
 			if(senderSocketId) io.to(senderSocketId).emit("createConversation", reciever, sender);
 		}
@@ -91,11 +95,24 @@ export const uploadFile = async (req, res) => {
 			});
 		}
 
+		const uploadDir = path.join(__dirname, 'uploads');
+
+		// Создаем директорию, если она не существует
+		if (!fs.existsSync(uploadDir)) {
+		  fs.mkdirSync(uploadDir, { recursive: true });
+		}
+
+		const uploadPath = path.join(uploadDir, file.name);
+	
+		await file.mv(uploadPath);
+	
+		const fileUrl = `/uploads/${file.name}`;
+
 		const newFile = await File.create({
 			name: file.name,
 			senderId,
 			receiverId,
-			file: file.data
+			file: fileUrl
 		});
 
 		if (newFile) {
@@ -114,7 +131,7 @@ export const uploadFile = async (req, res) => {
 		if (receiverSocketId) io.to(receiverSocketId).emit("newMessage", newFile);
 		if (senderSocketId) io.to(senderSocketId).emit("newMessage", newFile);
 
-		if (conversation.files.length == 1) {
+		if (conversation.files.length == 1 && conversation.messages.length < 1) {
 			if(receiverSocketId) io.to(receiverSocketId).emit("createConversation", reciever, sender);
 			if(senderSocketId) io.to(senderSocketId).emit("createConversation", reciever, sender);
 		} 
@@ -138,7 +155,7 @@ export const getFiles = async (req, res) => {
 		if (!conversation) return res.status(200).json([]);
 
 		const files = conversation.files;
-
+		
 		res.status(200).json(files);
 	} catch (error) {
 		console.log("Error in getMessages controller: ", error.message);

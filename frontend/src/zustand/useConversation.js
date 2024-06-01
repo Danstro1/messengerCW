@@ -17,6 +17,8 @@ const useConversation = create((set) => ({
 	files: [],
 	setFiles: (files) => set({ files }),
 
+	profile: false,
+	setProfile: (profile) => set({ profile }),
 }));
 
 export default useConversation;

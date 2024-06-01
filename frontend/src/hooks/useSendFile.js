@@ -11,11 +11,11 @@ const useSendFile = () => {
 	const url = `/api/${selectedConversation ? `messages/upload/${selectedConversation._id}` :  `group/upload/${selectedGroup._id}`}`
 	const sendFile = async (file) => {
 		setLoading(true);
+		if(!file) return;
 		try {
             const formData = new FormData();
             formData.append('file', file);
     
-            console.log(formData.getAll('file'));
 			const res = await fetch(url, {
 				method: "POST",
 				body: formData,
