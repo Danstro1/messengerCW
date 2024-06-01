@@ -9,7 +9,7 @@ import useGetGroupsForSidebar from "../../hooks/useGetGroups";
 const ConversationsForSidebar = () => {
 	const { loading, conversationsForSidebar } = useGetConversationsForSidebar();
 	const { groupsForSidebar } = useGetGroupsForSidebar();
-	const { isGroupCreating } = useGroup();
+	const { isGroupCreating, groupSettings, allUsers } = useGroup();
 
 	useListenNewConversations();
 	const lastConversationRef = useRef();
@@ -23,7 +23,8 @@ const ConversationsForSidebar = () => {
 					/>
 				</div>)
 			))}
-			{conversationsForSidebar.map((conversation, idx) => (
+			{(groupSettings && isGroupCreating ? conversationsForSidebar.filter(conversation => !allUsers.some(user => user._id == conversation._id))
+			: conversationsForSidebar).map((conversation, idx) => (
 				<div key={conversation._id} ref={lastConversationRef}>
 					<Conversation
 						isGroupCreating={isGroupCreating}

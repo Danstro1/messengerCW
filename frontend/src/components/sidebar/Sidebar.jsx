@@ -1,3 +1,4 @@
+import useGroup from "../../zustand/useGroup.js";
 import ConversationsForSidebar from "./ConversationsForSidebar.jsx";
 import Footer from "./Footer.jsx";
 import GroupInput from "./GroupInput.jsx";
@@ -5,10 +6,12 @@ import SearchInput from "./SearchInput.jsx";
 
 const Sidebar = (props) => {
 
-	if(props.isGroup){
+	const { groupSettings } = useGroup();
+
+	if (props.isGroup) {
 		return (
 			<div className='border-r md:min-w-[300px] border-slate-500 p-4 flex flex-col'>
-				<GroupInput />
+				{groupSettings ? "" : <GroupInput />}
 				<ConversationsForSidebar />
 				<Footer />
 			</div>
@@ -18,7 +21,7 @@ const Sidebar = (props) => {
 		<div className='border-r border-slate-500 p-4 flex flex-col'>
 			<SearchInput />
 			<div className='divider px-3'></div>
-			<ConversationsForSidebar/>
+			<ConversationsForSidebar />
 			<Footer />
 		</div>
 	);

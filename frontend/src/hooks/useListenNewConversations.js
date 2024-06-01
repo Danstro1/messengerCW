@@ -6,7 +6,7 @@ import useConversation from "../zustand/useConversation";
 const useListenNewConversations = () => {
 	const { socket } = useSocketContext();
 	const { selectedConversation, conversationsForSidebar, setConversationsForSidebar,
-		conversationsForSearch, setConversationsForSearch, setSearch } = useConversation();
+		conversationsForSearch, setConversationsForSearch, setSearch, files, setFiles } = useConversation();
 
 	useEffect(() => {
 		socket?.on("createConversation", (reciever, sender) => {
@@ -24,6 +24,6 @@ const useListenNewConversations = () => {
 		});
 
 		return () => socket?.off("createConversation");
-	}, [socket, conversationsForSidebar, selectedConversation, setConversationsForSidebar, conversationsForSearch, setConversationsForSearch, setSearch]);
+	}, [socket, conversationsForSidebar, selectedConversation, setConversationsForSidebar, conversationsForSearch, setConversationsForSearch, setSearch, files, setFiles]);
 };
 export default useListenNewConversations;

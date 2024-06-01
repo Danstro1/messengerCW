@@ -22,7 +22,7 @@ const Group = ({ group }) => {
 			>
 				<div className="avatar">
 					<div className='w-12 rounded-full'>
-						<img  alt='user avatar' />
+						<img src={group.groupPic}  alt='user avatar' />
 					</div>
 				</div>
 

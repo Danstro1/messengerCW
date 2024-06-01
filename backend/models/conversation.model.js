@@ -15,6 +15,13 @@ const conversationSchema = new mongoose.Schema(
 				default: [],
 			},
 		],
+		files: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "File",
+                default: [],
+            },
+        ],
 	},
 	{ timestamps: true }
 );
