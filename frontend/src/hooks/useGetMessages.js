@@ -28,6 +28,6 @@ const useGetMessages = () => {
 		if (selectedConversation?._id || selectedGroup?._id) getMessages();
 	}, [selectedConversation, selectedConversation?._id, selectedGroup?._id, setMessages, url]);
 
-	return { messages, loading };
+	return { messages, loading, setLoading };
 };
 export default useGetMessages;

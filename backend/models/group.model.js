@@ -19,10 +19,21 @@ const groupSchema = new mongoose.Schema(
                 default: [],
             },
         ],
+        files: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "File",
+                default: [],
+            },
+        ],
         owner: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-        }
+        },
+        groupPic: {
+			type: String,
+			default: "",
+		},
     },
     { timestamps: true }
 );
